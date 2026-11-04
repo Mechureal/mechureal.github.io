@@ -2,7 +2,7 @@ import type { Lang } from './content';
 export const copy = {
   ko: {
     nav: ['홈', '게임', '개발 일지', '팀 소개', '문의'],
-    studio: '안녕하세요, 메추리알입니다.',
+    studio: 'TEAM MECHUREAL',
     intro: '요즘은 배달 게임을 만들고 있어요. 만들면서 정리한 것들을 여기에 적어둡니다.',
     game: '딸배 시뮬레이터', status: '개발 중',
     pitch: '오늘도, 한 건 더.',
@@ -19,7 +19,7 @@ export const copy = {
   },
   en: {
     nav: ['Home', 'Games', 'Devlog', 'About', 'Contact'],
-    studio: 'Hi, we are Mechureal.',
+    studio: 'TEAM MECHUREAL',
     intro: 'We are making a delivery game. This is where we keep notes on it.',
     game: 'BROKE RIDER SIMULATOR', status: 'In development',
     pitch: 'One more delivery.',

@@ -16,7 +16,7 @@
   --line: #d7bcaa;
 }
 main, .nav-wrap { max-width: 1040px; }
-.site-header { background: var(--bg); }
+.site-header { background: #fbe2f2; }
 .nav-wrap { height: 74px; }
 .brand-egg { object-fit: contain; image-rendering: pixelated; border-radius: 3px; flex: none; }
 .studio-intro { display: block; padding: 52px 0 32px; }
