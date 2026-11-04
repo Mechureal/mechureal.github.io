@@ -67,3 +67,47 @@ main, .nav-wrap { max-width: 1040px; }
   .hero-art { grid-area: 2 / 1; }
   .art-label { grid-column: 1; }
 }
+
+@font-face {
+  font-family: "Gaegu";
+  src: url("/fonts/Gaegu-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Gowun Batang";
+  src: url("/fonts/GowunBatang-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-display: swap;
+}
+
+:root {
+  font-family: "Gowun Batang", Georgia, "Batang", serif;
+  font-synthesis: weight;
+}
+
+.brand, h1, h2, h3, .hero-content h1, .hero-content h2 {
+  font-family: "Gaegu", "Gowun Batang", Georgia, serif;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+
+.home-flow {
+  max-width: 700px;
+  margin-inline: auto;
+  text-align: center;
+}
+
+.home-flow .studio-intro { padding: clamp(42px, 9vw, 96px) 0 36px; }
+.home-flow .studio-intro h1 { font-size: clamp(2.2rem, 8vw, 5rem); }
+.home-flow .studio-intro p, .home-flow .hero-description { margin-inline: auto; }
+.home-flow .game-hero {
+  grid-template-columns: minmax(0, 1fr);
+  padding: clamp(18px, 5vw, 36px);
+}
+.home-flow .hero-art { grid-area: 2 / 1; width: 100%; aspect-ratio: 2 / 1; }
+.home-flow .art-label { grid-column: 1; max-width: none; }
+.home-devlog h2 { font-size: clamp(2rem, 5vw, 3rem); }
+.home-devlog .post-grid { text-align: start; }
+.home-devlog > .text-link { margin-top: 16px; }
