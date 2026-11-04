@@ -1,4 +1,4 @@
-# Mechureal Official Website
+# Team Mechureal Official Website
 
 Astro + TypeScript 정적 공식 사이트. 한국어 `/ko/`, 영어 `/en/`, 루트 `/`는 한국어로 이동합니다. 기존 루트 `index.html`은 원본 그대로 보존하며 Astro는 `src/pages/index.astro`를 빌드합니다. 배포 아티팩트에는 `dist/`만 포함됩니다.
 

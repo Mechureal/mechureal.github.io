@@ -10,7 +10,7 @@ const html = output.filter(p => p.endsWith('.html'));
 const read = path => readFileSync(path, 'utf8');
 test('both languages have all required pages and three home articles', () => {
   for (const lang of ['ko', 'en']) {
-    for (const route of ['', 'games/', 'games/broke-rider-simulator/', 'about/', 'contact/', 'devlog/']) {
+    for (const route of ['', 'games/', 'games/broke-rider-simulator/', 'about/', 'contact/', 'devlog/', 'announcements/']) {
       const $ = load(read(join(root, lang, route, 'index.html')));
       assert.equal($('html').attr('lang'), lang);
       assert.equal($('h1').length, 1);
@@ -36,9 +36,9 @@ test('every generated local link, image, stylesheet, and anchor resolves', () =>
     for (const el of $('img').toArray()) assert.notEqual($(el).attr('alt'), undefined, `${file}: image needs alt`);
   }
 });
-test('drafts, personal identities, email addresses, and tracking are absent from output', () => {
+test('drafts, personal identities, unapproved email addresses, and tracking are absent from output', () => {
   const forbidden = [new RegExp(['sunwoo', 'j'].join('-'), 'i'), /DRAFT_SENTINEL|draft-template|googletagmanager|google-analytics/i, /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i];
-  for (const file of output.filter(p => /\.(html|xml|css|js|svg|txt)$/.test(p))) for (const pattern of forbidden) assert.doesNotMatch(read(file), pattern, file);
+  for (const file of output.filter(p => /\.(html|xml|css|js|svg|txt)$/.test(p))) for (const pattern of forbidden) assert.doesNotMatch(read(file).replaceAll("team.mechureal@gmail.com", ""), pattern, file);
   assert.equal(output.some(p => /draft-template|template[\\/]index/.test(p)), false);
 });
 test('RSS, sitemap, article author, translations and neighbors are consistent', () => {
@@ -54,9 +54,20 @@ test('RSS, sitemap, article author, translations and neighbors are consistent', 
       assert.ok(sitemap('loc').toArray().some(loc => sitemap(loc).text() === url));
       const $ = load(read(join(root, new URL(url).pathname, 'index.html')));
       assert.equal($('meta[name="author"]').attr('content'), 'Mechureal');
-      assert.ok($('.article-navigation a').length);
+      if (!url.includes('hello-mechureal')) assert.ok($('.article-navigation a').length);
       assert.ok($('.language').attr('href')?.startsWith(`/${lang === 'ko' ? 'en' : 'ko'}/devlog/`));
     }
   }
   assert.match(read(join(root, 'robots.txt')), /Sitemap: https:\/\/mechureal.github.io\/sitemap-index.xml/);
+});
+
+test('announcements are separated from the devlog while old article URLs remain usable', () => {
+  for (const lang of ['ko', 'en']) {
+    const announcements = load(read(join(root, lang, 'announcements', 'index.html')));
+    const devlog = load(read(join(root, lang, 'devlog', 'index.html')));
+    assert.equal(announcements('a[href$="/devlog/hello-mechureal/"]').length > 0, true);
+    assert.equal(devlog('a[href$="/devlog/hello-mechureal/"]').length, 0);
+    const article = load(read(join(root, lang, 'devlog', 'hello-mechureal', 'index.html')));
+    assert.ok(article('a[href$="/announcements/"]').length);
+  }
 });

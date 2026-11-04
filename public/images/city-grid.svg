@@ -6,5 +6,5 @@
 <path d="M290 445H510V265H730V85" fill="none" stroke="#a04c77" stroke-width="25" opacity=".12"/><path d="M290 445H510V265H730V85" fill="none" stroke="#883a63" stroke-width="5" stroke-linejoin="round"/>
 <circle cx="290" cy="445" r="14" fill="#fff7e7" stroke="#883a63" stroke-width="4"/><circle cx="730" cy="85" r="15" fill="#a04c77"/><circle cx="730" cy="85" r="6" fill="#fff7e7"/>
 <g transform="translate(510 265)"><circle r="55" fill="#a04c77" opacity=".08"/><circle r="34" fill="#a04c77" opacity=".1"/><circle r="19" fill="#fff7e7" stroke="#a04c77" stroke-width="2"/><path d="m0-11 9 20-9-4-9 4Z" fill="#883a63"/></g></g>
-<ellipse cx="860" cy="330" rx="450" ry="390" fill="url(#glow)"/><g fill="#694634" font-family="monospace" font-size="10" letter-spacing="2"><text x="880" y="640">ROUTE / 001</text></g><path d="M860 625h-20v48h20M1095 625h20v48h-20" fill="none" stroke="#ab8469"/>
+<ellipse cx="860" cy="330" rx="450" ry="390" fill="url(#glow)"/><g fill="#694634" font-family="monospace" font-size="10" letter-spacing="2"></g><path d="M860 625h-20v48h20M1095 625h20v48h-20" fill="none" stroke="#ab8469"/>
 </svg>
