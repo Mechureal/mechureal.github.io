@@ -1,0 +1,7 @@
+---
+import { postUrl, formatDate, type Post, type Lang } from '../lib/content';
+import { copy } from '../lib/i18n';
+interface Props { posts: Post[]; lang: Lang; }
+const { posts, lang } = Astro.props;
+---
+{posts.length ? <div class="post-grid">{posts.map(post => <article class="post-card"><div class="post-meta"><time datetime={post.data.date.toISOString()}>{formatDate(post.data.date, lang)}</time><span>{post.data.tags[0]}</span></div><h3><a href={postUrl(post)}>{post.data.title}</a></h3><p>{post.data.description}</p></article>)}</div> : <p class="empty">{copy[lang].empty}</p>}

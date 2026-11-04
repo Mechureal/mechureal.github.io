@@ -1,0 +1,85 @@
+---
+import { render } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import GameHero from '../../components/GameHero.astro';
+import PostCards from '../../components/PostCards.astro';
+import { publishedPosts, languages, postUrl, formatDate, type Lang, type Post } from '../../lib/content';
+import { copy } from '../../lib/i18n';
+
+export async function getStaticPaths() {
+  const posts = await publishedPosts();
+  const routes: { params: { lang: Lang; path: string | undefined }; props: Record<string, unknown> }[] = [];
+  for (const lang of languages) {
+    for (const path of [undefined, 'games', 'games/broke-rider-simulator', 'about', 'contact', 'announcements']) routes.push({ params: { lang, path }, props: { view: path || 'home' } });
+    const local = posts.filter(p => p.data.lang === lang);
+    const devlogs = local.filter(p => !p.data.tags.includes('announcement'));
+    for (const tag of [undefined, ...new Set(devlogs.flatMap(p => p.data.tags))]) {
+      const filtered = tag ? devlogs.filter(p => p.data.tags.includes(tag)) : devlogs;
+      const count = Math.max(1, Math.ceil(filtered.length / 6));
+      const base = tag ? `devlog/tag/${tag}` : 'devlog';
+      for (let page = 1; page <= count; page++) routes.push({ params: { lang, path: page === 1 ? base : `${base}/page/${page}` }, props: { view: 'devlog', tag, page, count, base, listing: filtered.slice((page - 1) * 6, page * 6) } });
+    }
+    for (const post of local) routes.push({ params: { lang, path: `devlog/${post.data.slug}` }, props: { view: 'article', post } });
+  }
+  return routes;
+}
+interface Props { view: string; tag?: string; page?: number; count?: number; base?: string; listing?: Post[]; post?: Post; }
+const { view, tag, page = 1, count = 1, base = 'devlog', listing = [], post } = Astro.props;
+const lang = Astro.params.lang as Lang;
+const other = lang === 'ko' ? 'en' : 'ko';
+const ko = lang === 'ko';
+const t = copy[lang];
+const posts = await publishedPosts();
+const local = posts.filter(p => p.data.lang === lang);
+const devlogs = local.filter(p => !p.data.tags.includes('announcement'));
+const notices = local.filter(p => p.data.tags.includes('announcement'));
+const tags = [...new Set(devlogs.flatMap(p => p.data.tags))].sort();
+const translated = post && posts.find(p => p.data.lang === other && p.data.translationKey === post.data.translationKey);
+const otherPosts = posts.filter(p => p.data.lang === other && !p.data.tags.includes('announcement') && (!tag || p.data.tags.includes(tag)));
+const listingTranslationExists = (!tag || otherPosts.length > 0) && page <= Math.max(1, Math.ceil(otherPosts.length / 6));
+const fallback = view === 'article' ? !translated : view === 'devlog' ? !listingTranslationExists : false;
+const alternate = view === 'article' ? translated ? postUrl(translated) : `/${other}/devlog/` : view === 'devlog' && fallback ? `/${other}/devlog/` : undefined;
+const titles: Record<string, string> = { home: ko ? '메추리알' : 'Mechureal', games: ko ? '우리가 만드는 게임' : 'Games in the making', 'games/broke-rider-simulator': t.game, about: ko ? '메추리알 소개' : 'About Mechureal', contact: t.contact, announcements: ko ? '공지사항' : 'Announcements', devlog: tag ? `${t.logs} · #${tag}` : t.logs, article: post?.data.title || '' };
+const title = titles[view] + (page > 1 ? ` · ${page}` : '');
+const description = post?.data.description || (view.includes('games') ? t.gameIntro : view === 'contact' ? t.contactIntro : t.intro);
+const Content = post ? (await render(post)).Content : undefined;
+const articlePosts = post?.data.tags.includes('announcement') ? notices : devlogs;
+const position = post ? articlePosts.findIndex(p => p.id === post.id) : -1;
+const related = post ? articlePosts.filter(p => p.id !== post.id && (p.data.game === post.data.game || p.data.tags.some(tag => post.data.tags.includes(tag)))).slice(0, 3) : [];
+---
+<Layout {lang} {title} {description} {alternate} {fallback} activeSection={post?.data.tags.includes('announcement') ? 'announcements/' : undefined} article={!!post} date={post?.data.date} updated={post?.data.updated}>
+{view === 'home' && <div class="home-flow">
+  <section class="home-opening">
+    <h1>{t.game}</h1>
+    <p class="home-intro">{t.gameIntro.split(/(?<=\.)\s+/).map((sentence) => <span>{sentence} </span>)}</p>
+    <a class="text-link" href={`/${lang}/games/broke-rider-simulator/`}>{t.explore}</a>
+  </section>
+  <figure class="home-map">
+    <img src="/images/city-grid.svg" width="1200" height="800" alt={ko ? '도시의 배달 경로 스케치' : 'Sketch of a delivery route through the city'} fetchpriority="high" />
+    <figcaption>{ko ? '배달 경로 스케치' : 'Delivery route sketch'}</figcaption>
+  </figure>
+  <section class="home-play">
+    <h2>{ko ? '배달로 빚 갚기' : 'Make rent. Pay off debt.'}</h2>
+    <p>{ko ? '실제 지도를 바탕으로 한 도시에서 배달하고, 번 돈으로 생활비와 빚을 감당하는 1인칭 시뮬레이터예요. OpenStreetMap 데이터로 익숙한 현실의 길을 게임 속에서 달려보세요.' : 'Ride through a city built with real OpenStreetMap data, making deliveries to cover your bills and pay down debt. Familiar real-world streets become your workplace.'}</p>
+    <p></p>
+  </section>
+  <section class="section home-devlog"><h2>{t.latest}</h2><PostCards posts={devlogs.slice(0, 3)} {lang} /><a class="text-link" href={`/${lang}/devlog/`}>{t.all}</a></section>
+</div>}{view === 'games' && <><section class="page-heading"><h1>{title}</h1><p>{ko ? '지금 머리 빠지게 개발하고 있는 게임입니다. 곧 만나봐요.' : 'Here is what we are making. Delivery is not available just yet.'}</p></section><GameHero {lang} /></>}
+{view === 'games/broke-rider-simulator' && <>
+  <div class="detail-top"><a class="text-link" href={`/${lang}/games/`}>{t.nav[2]}</a><span>{ko ? '딸배 시뮬레이터' : 'BROKE RIDER SIMULATOR'}</span></div><GameHero {lang} detail />
+  <div class="game-facts"><div><span>{ko ? '장르' : 'GENRE'}</span><strong>{ko ? '배달 · 생활 · 코미디' : 'Delivery · Life · Comedy'}</strong></div><div><span>{ko ? '플레이' : 'PLAYERS'}</span><strong>{ko ? '1인칭 싱글플레이' : 'First-person single-player'}</strong></div><div><span>{ko ? '목표 플랫폼' : 'TARGET PLATFORMS'}</span><strong>Windows / macOS</strong></div><div><span>{ko ? '출시 일정' : 'RELEASE'}</span><strong>{ko ? '미정' : 'To be announced'}</strong></div></div>
+  <section class="section" id="gameplay"><div class="section-head"><div><h2>{ko ? '배달 한 건의 순서' : 'How a delivery works'}</h2></div></div><p class="notice">{t.planned}</p>
+  <ol class="gameplay-steps">{(ko ? [['주문을 받다', '주문을 확인하고 수락한 뒤 가게로 이동합니다. 주문번호와 음식을 대조하고 실제 물품을 픽업합니다.'], ['도시를 달리다', '자전거 등 이동수단으로 음식을 운반하고, 지도와 길찾기를 이용해 도시의 골목을 탐색합니다.'], ['한 건을 마치다', '건물 안으로 들어가 지정된 배송지와 수령인을 확인합니다. 배달을 마치고 수익을 정산합니다.']] : [['Take the order', 'Check and accept an order. Reach the store, match the order number to the food, and physically pick it up.'], ['Ride the city', 'Carry the order by bicycle and other planned vehicles. Use maps and navigation to find your way through the streets.'], ['Make the delivery', 'Enter buildings, confirm the destination and recipient, complete the delivery, and settle your earnings.']]).map(([heading, text], i) => <li><span class="step-number">0{i + 1}</span><h3>{heading}</h3><p>{text}</p></li>)}</ol></section>
+  <section class="section modes"><div><p class="eyebrow">{ko ? '이야기 모드' : 'Story mode'}</p><h2>{ko ? '배달해서 빚 갚기' : 'Deliveries and debt'}</h2><p>{ko ? '수원 인계동 주변을 바탕으로, OSM 데이터를 활용한 도시를 만들 계획이에요. 배달로 생활비와 빚을 갚고, 그 와중에 사람도 만나고 이야기도 진행됩니다. 통장은 바쁘겠네요.' : 'We’re planning a city built from OpenStreetMap data around Ingye-dong, Suwon. Make deliveries, cover your bills, pay down debt, and meet people along the way. Your bank account has a lot on its plate.'}</p></div><div><p class="eyebrow">{ko ? '자유 배달' : 'Free delivery'}</p><h2>{ko ? '지도 골라서 배달하기' : 'Pick an area and deliver'}</h2><p>{ko ? '플레이어가 선택한 실제 지역을 바탕으로 OSM 지도를 생성하는 배달 중심 모드를 구상하고 있어요. 이야기나 빚 걱정 없이, 고른 동네에서 배달에 집중하는 쪽입니다.' : 'Pick a real-world area and take delivery jobs on a map generated from OSM data. We’re planning this mode for when you want the deliveries without the debt storyline.'}</p></div></section>
+  <section class="development-status"><div><h2>{ko ? '지금은 개발 중입니다.' : 'Currently in development.'}</h2><p>{ko ? '아직 출시일이나 공개 빌드는 없어요. 만드는 동안 생긴 일은 개발 일지에 적어두고 있습니다.' : 'No release date or public build yet. The devlog is where we keep track of what’s taking shape.'}</p></div><div class="steam-placeholder"><span>STEAM</span><strong>{t.pending}</strong><p>{ko ? '공식 스토어 페이지가 열리면 연결됩니다.' : 'A link will be added when the official store page is available.'}</p></div></section>
+  <section class="section"><div class="section-head"><h2>{t.logs}</h2><a class="text-link" href={`/${lang}/devlog/`}>{t.all}</a></div><PostCards posts={devlogs.filter(p => p.data.game === 'broke-rider-simulator').slice(0, 3)} {lang} /></section>
+</>}
+{view === 'about' && <><section class="page-heading"><h1>{title}</h1><p>{t.intro}</p></section><section class="about-manifesto"><div class="giant-mark"><img src="/images/mechureal-egg.png" alt={ko ? '픽셀로 그린 메추리알 로고' : 'Pixel art quail egg logo'} width="300" height="300" /></div><div><h2>{ko ? '지금 만드는 게임' : 'Our current project'}</h2><p>{ko ? '딸배 시뮬레이터는 개발자가 직접 배달 일을 했던 경험을 바탕으로 만든 1인칭 배달 게임입니다. 실제 지도 데이터를 바탕으로 재현한 거리에서 배달합니다.' : 'BROKE RIDER SIMULATOR is a first-person delivery game based on the developer’s own experience delivering food. You make deliveries on streets recreated from real map data.'}</p><p>{ko ? '실제 지도를 어떻게 게임에 넣을지, 배달 한 건을 어디까지 구현할지는 개발 일지에 적고 있습니다.' : 'Our devlog covers how we bring real maps into the game and what goes into a single delivery.'}</p><a class="button" href={`/${lang}/games/`}>{t.nav[2]}</a></div></section></>}
+{view === 'contact' && <><section class="page-heading"><h1>{title}</h1><p>{t.contactIntro}</p></section><section class="contact-list"><div><h2>{ko ? '공식 문의 이메일' : 'Official contact email'}</h2><a class="text-link" href="mailto:team.mechureal@gmail.com">team.mechureal@gmail.com</a></div>{[['YOUTUBE / SOCIAL', ko ? '영상과 소셜 채널' : 'Video and social channels'], ['STEAM', ko ? '게임 스토어' : 'Game store']].map(([, text]) => <div><h2>{text}</h2><span class="muted">{t.pending}</span></div>)}<div><h2>{ko ? '깃허브' : 'GitHub'}</h2><a class="text-link" href="https://github.com/Mechureal">{ko ? '깃허브 조직' : 'Official GitHub organization'}</a></div></section></>}
+{view === 'announcements' && <><section class="page-heading"><h1>{ko ? '공지사항' : 'Announcements'}</h1><p>{ko ? '중요한 소식은 여기 올립니다. 광고 문자는 따로 보내지 않습니다.' : 'The important updates go here. No promotional texts, promise.'}</p></section>{notices.length ? <PostCards posts={notices} {lang} /> : <p class="empty">{ko ? '아직 공지사항이 없습니다.' : 'No announcements yet.'}</p>}</>}
+{view === 'devlog' && <><section class="page-heading"><h1>{ko ? '개발 일지' : 'Devlog'}</h1><p>{ko ? '게임을 만들며 고친 것, 바꾼 것, 한참 붙잡고 있던 것들에 대해 이야기합니다.' : 'What we fixed, changed, and spent far too long figuring out.'}</p></section><nav class="tag-filter" aria-label={ko ? '태그 필터' : 'Filter by tag'}><a aria-current={!tag ? 'page' : undefined} href={`/${lang}/devlog/`}>{ko ? '전체' : 'All'}</a>{tags.map(item => <a aria-current={item === tag ? 'page' : undefined} href={`/${lang}/devlog/tag/${item}/`}>#{item}</a>)}</nav><PostCards posts={listing} {lang} /><nav class="pagination" aria-label={ko ? '페이지 탐색' : 'Pagination'}>{Array.from({ length: count }, (_, i) => i + 1).map(n => <a href={`/${lang}/${base}/${n === 1 ? '' : `page/${n}/`}`} aria-current={n === page ? 'page' : undefined}>{n}</a>)}</nav></>}
+{view === 'article' && post && Content && <>
+  <article class="article"><header class="article-header"><a class="text-link" href={post.data.tags.includes('announcement') ? `/${lang}/announcements/` : `/${lang}/devlog/`}>{post.data.tags.includes('announcement') ? (ko ? '공지사항으로 돌아가기' : 'Back to announcements') : t.back}</a><div class="post-meta"><time datetime={post.data.date.toISOString()}>{formatDate(post.data.date, lang)}</time><span>Mechureal</span></div><h1>{post.data.title}</h1><p class="article-lede">{post.data.description}</p><div class="article-tags">{post.data.tags.filter(tag => tags.includes(tag)).map(tag => <a href={`/${lang}/devlog/tag/${tag}/`}>#{tag}</a>)}</div>{fallback && <p class="notice">{t.switchFallback}</p>}{post.data.updated && <p class="muted">{ko ? '업데이트' : 'Updated'}: {formatDate(post.data.updated, lang)}</p>}</header><figure><img src={post.data.cover} alt={t.concept} width="1200" height="800" /><figcaption>{t.concept}</figcaption></figure><div class="prose"><Content /></div><nav class="article-navigation" aria-label={ko ? '게시글 탐색' : 'Article navigation'}><div>{articlePosts[position + 1] && <a href={postUrl(articlePosts[position + 1])}>{t.previous}<strong>{articlePosts[position + 1].data.title}</strong></a>}</div><div>{articlePosts[position - 1] && <a href={postUrl(articlePosts[position - 1])}>{t.next}<strong>{articlePosts[position - 1].data.title}</strong></a>}</div></nav></article>
+  <section class="section"><div class="section-head"><h2>{t.related}</h2></div><PostCards posts={related} {lang} /></section>
+</>}
+</Layout>

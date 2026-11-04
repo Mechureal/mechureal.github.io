@@ -1,0 +1,47 @@
+---
+import '../styles/global.css';
+import { copy } from '../lib/i18n';
+import type { Lang } from '../lib/content';
+interface Props { activeSection?: string; lang: Lang; title: string; description: string; alternate?: string; fallback?: boolean; article?: boolean; date?: Date; updated?: Date; image?: string; noindex?: boolean; }
+const { activeSection, lang, title, description, alternate, fallback, article, date, updated, image = '/images/social.png', noindex } = Astro.props;
+const t = copy[lang];
+const other = lang === 'ko' ? 'en' : 'ko';
+const path = Astro.url.pathname;
+const canonical = new URL(path, Astro.site);
+const alternatePath = noindex ? `/${other}/` : alternate || path.replace(`/${lang}/`, `/${other}/`);
+const sections = ['', 'about/', 'games/', 'announcements/', 'devlog/', 'contact/'];
+---
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" /><meta name="viewport" content="width=device-width" />
+    <link rel="preload" href="/fonts/GowunDodum-Regular.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/Gaegu-Bold.woff2" as="font" type="font/woff2" crossorigin />
+    <title>{title} | Team Mechureal</title><meta name="description" content={description} />
+    <meta name="author" content="Mechureal" /><meta name="theme-color" content="#fff9ee" />
+    <link rel="icon" type="image/png" href="/images/mechureal-egg.png" />
+    <link rel="canonical" href={canonical} />
+    {!noindex && <link rel="alternate" hreflang={lang} href={canonical} />}
+    {!noindex && !fallback && <link rel="alternate" hreflang={other} href={new URL(alternatePath, Astro.site)} />}
+    {!noindex && <link rel="alternate" hreflang="x-default" href={new URL(lang === 'ko' ? path : fallback ? path : alternatePath, Astro.site)} />}
+    <link rel="alternate" type="application/rss+xml" title={`Mechureal Devlog (${lang})`} href={`/${lang}/rss.xml`} />
+    <meta property="og:site_name" content="Mechureal" /><meta property="og:title" content={`${title} | Mechureal`} />
+    <meta property="og:description" content={description} /><meta property="og:url" content={canonical} />
+    <meta property="og:type" content={article ? 'article' : 'website'} /><meta property="og:locale" content={lang === 'ko' ? 'ko_KR' : 'en_US'} />
+    <meta property="og:image" content={new URL(image, Astro.site)} /><meta property="og:image:alt" content="Mechureal — Independent Game Studio" />
+    <meta name="twitter:card" content="summary_large_image" /><meta name="twitter:title" content={`${title} | Mechureal`} /><meta name="twitter:description" content={description} /><meta name="twitter:image" content={new URL(image, Astro.site)} />
+    {date && <meta property="article:published_time" content={date.toISOString()} />}{updated && <meta property="article:modified_time" content={updated.toISOString()} />}
+    {noindex && <meta name="robots" content="noindex" />}
+  </head>
+  <body>
+    <a class="skip" href="#main">{t.skip}</a>
+    <header class="site-header"><div class="nav-wrap">
+      <a class="brand" href={`/${lang}/`} aria-label="Mechureal"><img class="brand-egg" src="/images/mechureal-egg.png" width="42" height="42" alt="" />TEAM MECHUREAL</a>
+      <nav class="desktop-nav" aria-label={lang === 'ko' ? '주 메뉴' : 'Main navigation'}>{sections.map((section, i) => <a aria-current={activeSection ? activeSection === section : path === `/${lang}/${section}` || (section && path.startsWith(`/${lang}/${section}`)) ? 'page' : undefined} href={`/${lang}/${section}`}>{t.nav[i]}</a>)}</nav>
+      <a class="language" href={alternatePath} lang={other} title={fallback ? t.switchFallback : undefined}>{lang === 'ko' ? 'EN' : '한국어'} </a>
+      <details class="mobile-menu"><summary aria-label={lang === 'ko' ? '메뉴' : 'Menu'}>☰</summary><nav aria-label={lang === 'ko' ? '모바일 메뉴' : 'Mobile navigation'}>{sections.map((section, i) => <a href={`/${lang}/${section}`}>{t.nav[i]}</a>)}</nav></details>
+    </div></header>
+    <main id="main"><slot /></main>
+    <footer class="site-footer"><div><a class="brand" href={`/${lang}/`}><img class="brand-egg" src="/images/mechureal-egg.png" width="36" height="36" alt="" />TEAM MECHUREAL</a></div><div class="footer-links"><a href={`/${lang}/contact/`} aria-label={t.nav[5]} title={t.nav[5]}><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="1"/><path d="m4 7 8 6 8-6"/></svg></a><a href={`/${lang}/rss.xml`} aria-label="RSS" title="RSS"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19h.01M5 12a7 7 0 0 1 7 7M5 5a14 14 0 0 1 14 14"/><circle cx="5" cy="19" r="1"/></svg></a><a href="https://github.com/Mechureal" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 19c-4 1.3-4-2.5-5-3m10 6v-3.9a3.4 3.4 0 0 0-.9-2.7c3-.3 6.2-1.5 6.2-6.8a5.3 5.3 0 0 0-1.4-3.7 4.9 4.9 0 0 0-.1-3.7S16.6.9 14 2.6a13.4 13.4 0 0 0-7 0C4.4.9 3.2 1.2 3.2 1.2a4.9 4.9 0 0 0-.1 3.7 5.3 5.3 0 0 0-1.4 3.7c0 5.3 3.2 6.5 6.2 6.8A3.4 3.4 0 0 0 7 18.1V22" transform="translate(2 0) scale(.9)"/></svg></a></div><p class="copyright">© {new Date().getUTCFullYear()} Mechureal</p></footer>
+  </body>
+</html>
