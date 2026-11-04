@@ -1,6 +1,21 @@
 import sharp from 'sharp';
-import { readFile } from 'node:fs/promises';
-const background = await sharp(await readFile('public/images/city-grid.svg')).resize(1200, 630).png().toBuffer();
-const overlay = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630"><rect width="1200" height="630" fill="#fff9ee" opacity=".83"/><rect x="70" y="68" width="8" height="34" fill="#823c60"/><g font-family="Arial, sans-serif"><text x="95" y="95" font-size="22" font-weight="bold" fill="#823c60" letter-spacing="4">MECHUREAL / INDEPENDENT GAME STUDIO</text><text x="75" y="275" font-size="72" font-weight="bold" fill="#35251b">Mechureal</text><text x="75" y="365" font-size="72" font-weight="bold" fill="#823c60"></text><text x="80" y="480" font-size="24" fill="#695344">Making a delivery game.</text></g></svg>`);
-const egg = await sharp('public/images/mechureal-egg.png').resize(300, 300, { kernel: 'nearest' }).png().toBuffer();
-await sharp(background).composite([{ input: overlay }, { input: egg, left: 820, top: 180 }]).png().toFile('public/images/social.png');
+
+const width = 1200;
+const height = 630;
+const pink = '#fbe2f2';
+const logo = await sharp('public/images/mechureal-egg.png')
+  .resize(420, 420, { kernel: 'nearest' })
+  .png()
+  .toBuffer();
+
+await sharp({
+  create: {
+    width,
+    height,
+    channels: 3,
+    background: pink,
+  },
+})
+  .composite([{ input: logo, left: 390, top: 105 }])
+  .png()
+  .toFile('public/images/social.png');
