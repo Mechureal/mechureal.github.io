@@ -17,7 +17,7 @@ const sections = ['', 'games/', 'devlog/', 'about/', 'contact/'];
     <meta charset="utf-8" /><meta name="viewport" content="width=device-width" />
     <title>{title} | Mechureal</title><meta name="description" content={description} />
     <meta name="author" content="Mechureal" /><meta name="theme-color" content="#101217" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" href="/images/mechureal-egg.png" />
     <link rel="canonical" href={canonical} />
     {!noindex && <link rel="alternate" hreflang={lang} href={canonical} />}
     {!noindex && !fallback && <link rel="alternate" hreflang={other} href={new URL(alternatePath, Astro.site)} />}
@@ -34,12 +34,12 @@ const sections = ['', 'games/', 'devlog/', 'about/', 'contact/'];
   <body>
     <a class="skip" href="#main">{t.skip}</a>
     <header class="site-header"><div class="nav-wrap">
-      <a class="brand" href={`/${lang}/`} aria-label="Mechureal"><svg viewBox="0 0 32 32" width="30" height="30" aria-hidden="true"><path d="M3 25V7h6l7 10L23 7h6v18h-6V17l-7 10-7-10v8Z" fill="currentColor" /></svg>MECHUREAL</a>
+      <a class="brand" href={`/${lang}/`} aria-label="Mechureal"><img class="brand-egg" src="/images/mechureal-egg.png" width="42" height="42" alt="" />MECHUREAL</a>
       <nav class="desktop-nav" aria-label={lang === 'ko' ? '주 메뉴' : 'Main navigation'}>{sections.map((section, i) => <a aria-current={path === `/${lang}/${section}` || (section && path.startsWith(`/${lang}/${section}`)) ? 'page' : undefined} href={`/${lang}/${section}`}>{t.nav[i]}</a>)}</nav>
       <a class="language" href={alternatePath} lang={other} title={fallback ? t.switchFallback : undefined}>{lang === 'ko' ? 'EN' : '한국어'} <span aria-hidden="true">↗</span></a>
       <details class="mobile-menu"><summary aria-label={lang === 'ko' ? '메뉴' : 'Menu'}>☰</summary><nav aria-label={lang === 'ko' ? '모바일 메뉴' : 'Mobile navigation'}>{sections.map((section, i) => <a href={`/${lang}/${section}`}>{t.nav[i]}</a>)}</nav></details>
     </div></header>
     <main id="main"><slot /></main>
-    <footer class="site-footer"><div><a class="brand" href={`/${lang}/`}>MECHUREAL</a><p>{t.footer}</p></div><div class="footer-links"><a href={`/${lang}/contact/`}>{t.nav[4]}</a><a href={`/${lang}/rss.xml`}>RSS ↗</a><a href="https://github.com/Mechureal">GitHub ↗</a></div><p class="copyright">© {new Date().getUTCFullYear()} Mechureal</p></footer>
+    <footer class="site-footer"><div><a class="brand" href={`/${lang}/`}><img class="brand-egg" src="/images/mechureal-egg.png" width="36" height="36" alt="" />MECHUREAL</a><p>{t.footer}</p></div><div class="footer-links"><a href={`/${lang}/contact/`}>{t.nav[4]}</a><a href={`/${lang}/rss.xml`}>RSS ↗</a><a href="https://github.com/Mechureal">GitHub ↗</a></div><p class="copyright">© {new Date().getUTCFullYear()} Mechureal</p></footer>
   </body>
 </html>
