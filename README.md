@@ -13,7 +13,7 @@ npm run verify
 npm run preview
 ```
 
-`verify`는 Astro 타입 검사, 프로덕션 빌드, 생성된 링크·메타데이터·RSS·개인정보 검사, 임시 콘텐츠를 이용한 페이지네이션·번역 fallback·MDX·초안·미래 날짜 검증을 실행합니다. 임시 콘텐츠는 실행 후 제거하며 검증 빌드는 `.qa/fixture-dist/`에만 기록합니다. 배포 대상 `dist/`에는 테스트 글이 들어가지 않습니다.
+`verify`는 Astro 타입 검사, 프로덕션 빌드, 생성된 링크·메타데이터·RSS 검사, 임시 콘텐츠를 이용한 페이지네이션·번역 fallback·MDX·초안·미래 날짜 검증을 실행합니다. 임시 콘텐츠는 실행 후 제거하며 검증 빌드는 `.qa/fixture-dist/`에만 기록합니다. 배포 대상 `dist/`에는 테스트 글이 들어가지 않습니다.
 
 Windows에서 상위 경로에 `#` 문자가 있으면 Vite가 콘텐츠 파일을 읽지 못할 수 있습니다. 이 경우 `#` 없는 경로에 별도 체크아웃하거나 검증용 복사본을 만들고 실행하세요. 저장소 원본을 이동하거나 덮어쓸 필요는 없습니다. 제한된 환경에서는 `ASTRO_TELEMETRY_DISABLED=1`로 Astro의 로컬 텔레메트리 설정 파일 접근을 끌 수 있습니다.
 
@@ -66,11 +66,5 @@ slug: unique-topic
 PR/기능 브랜치에서는 배포 job이 실행되지 않습니다. 따라서 PR 준비 시점에는 새 사이트의 실제 운영 배포 성공을 주장할 수 없습니다. 기존 Pages 배포 방식이 브랜치 기반이면 위 Source 변경 전까지 기존 페이지가 유지됩니다.
 
 자체 도메인 전환 시 `SITE_URL`을 새 HTTPS origin으로 설정하여 빌드하고, `public/CNAME` 및 Pages DNS 설정을 추가합니다. 사이트는 origin 루트 배포용이며 `/project/` 하위 경로 배포는 별도 base-path 작업이 필요합니다.
-
-## 브랜드와 개인정보
-
-공식 작성자는 Mechureal입니다. 개인 프로필, 개인 이메일, 개인 소셜 링크 및 외부 분석 도구를 넣지 않습니다. 미확정 이메일·YouTube·SNS·Steam은 준비 중으로만 표시합니다. 제공된 픽셀 메추리알 로고와 이를 바탕으로 한 색상을 사용합니다. 게임 화면 대신 사용하는 도시 그래픽은 교체 가능한 콘셉트 이미지입니다.
-
-새 이미지·영상은 픽셀 내용, EXIF/XMP, 파일명, 자막을 검토합니다. Git 커밋 작성자와 조직 구성원 정보는 웹사이트와 별개이므로 공개 전 별도 점검합니다. 기존 커밋 기록은 수정하지 않습니다. 게임 프로젝트는 이 저장소의 작업 범위에 포함되지 않습니다.
 
 기술 참고: [Astro Content Collections](https://docs.astro.build/en/guides/content-collections/), [Astro GitHub Pages](https://docs.astro.build/en/guides/deploy/github/).
