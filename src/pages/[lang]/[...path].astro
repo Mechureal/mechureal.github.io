@@ -45,8 +45,20 @@ const related = post ? local.filter(p => p.id !== post.id && (p.data.game === po
 ---
 <Layout {lang} {title} {description} {alternate} {fallback} article={!!post} date={post?.data.date} updated={post?.data.updated}>
 {view === 'home' && <div class="home-flow">
-  <section class="studio-intro"><h1>{t.studio}</h1><p>{t.intro}</p></section>
-  <GameHero {lang} />
+  <section class="home-opening">
+    <h1>{t.game}</h1>
+    <p>{t.gameIntro}</p>
+    <a class="text-link" href={`/${lang}/games/broke-rider-simulator/`}>{t.explore} ↗</a>
+  </section>
+  <figure class="home-map">
+    <img src="/images/city-grid.svg" width="1200" height="800" alt={ko ? '도시의 배달 경로 스케치' : 'Sketch of a delivery route through the city'} fetchpriority="high" />
+    <figcaption>{ko ? '배달 경로 스케치' : 'Delivery route sketch'}</figcaption>
+  </figure>
+  <section class="home-play">
+    <h2>{ko ? '배달 한 건' : 'One delivery'}</h2>
+    <p>{ko ? '가게에 들러 주문번호를 확인하고 음식을 받아요. 지도를 보고 건물까지 간 다음, 안으로 들어가 음식을 받을 사람을 찾습니다.' : 'Stop by the shop, check the order number, and pick up the food. Follow the map to the building, then go inside and find the recipient.'}</p>
+    <p>{ko ? '이야기 모드에서는 배달로 생활비와 빚을 갚습니다. 자유 배달에서는 지역을 골라 배달만 할 수 있게 구상하고 있어요.' : 'In story mode, deliveries cover bills and debt. For free delivery, we plan to let you pick an area and just take orders.'}</p>
+  </section>
   <section class="section home-devlog"><h2>{t.latest}</h2><PostCards posts={local.slice(0, 3)} {lang} /><a class="text-link" href={`/${lang}/devlog/`}>{t.all} ↗</a></section>
 </div>}{view === 'games' && <><section class="page-heading"><p class="eyebrow">OUR GAMES / 001</p><h1>{title}</h1><p>{ko ? '지금 만들고 있는 게임은 하나입니다.' : 'We have one game in the works.'}</p></section><GameHero {lang} /></>}
 {view === 'games/broke-rider-simulator' && <>

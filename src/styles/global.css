@@ -76,38 +76,32 @@ main, .nav-wrap { max-width: 1040px; }
 }
 
 @font-face {
-  font-family: "Gowun Batang";
-  src: url("/fonts/GowunBatang-Regular.ttf") format("truetype");
+  font-family: "Gowun Dodum";
+  src: url("/fonts/GowunDodum-Regular.ttf") format("truetype");
   font-weight: 400;
   font-display: swap;
 }
 
 :root {
-  font-family: "Gowun Batang", Georgia, "Batang", serif;
+  font-family: "Gowun Dodum", "Malgun Gothic", sans-serif;
   font-synthesis: weight;
 }
 
-.brand, h1, h2, h3, .hero-content h1, .hero-content h2 {
-  font-family: "Gaegu", "Gowun Batang", Georgia, serif;
+h1, .hero-content h1 {
+  font-family: "Gaegu", "Gowun Dodum", "Malgun Gothic", sans-serif;
   font-weight: 700;
   letter-spacing: -0.025em;
 }
 
-.home-flow {
-  max-width: 700px;
-  margin-inline: auto;
-  text-align: center;
-}
-
-.home-flow .studio-intro { padding: clamp(42px, 9vw, 96px) 0 36px; }
-.home-flow .studio-intro h1 { font-size: clamp(2.2rem, 8vw, 5rem); }
-.home-flow .studio-intro p, .home-flow .hero-description { margin-inline: auto; }
-.home-flow .game-hero {
-  grid-template-columns: minmax(0, 1fr);
-  padding: clamp(18px, 5vw, 36px);
-}
-.home-flow .hero-art { grid-area: 2 / 1; width: 100%; aspect-ratio: 2 / 1; }
-.home-flow .art-label { grid-column: 1; max-width: none; }
-.home-devlog h2 { font-size: clamp(2rem, 5vw, 3rem); }
-.home-devlog .post-grid { text-align: start; }
+.home-flow { max-width: 760px; margin-inline: auto; }
+.home-opening { padding: clamp(44px, 8vw, 84px) 0 32px; text-align: center; }
+.home-opening h1 { font-size: clamp(2.6rem, 8vw, 5rem); margin-bottom: 16px; }
+.home-opening p { max-width: 46ch; margin-inline: auto; font-size: 1.125rem; }
+.home-map { margin: 0; }
+.home-map img { width: 100%; height: auto; aspect-ratio: 2 / 1; }
+.home-map figcaption { color: var(--muted); font-size: .875rem; margin-top: 8px; }
+.home-play { max-width: 56ch; margin: clamp(42px, 7vw, 76px) auto; }
+.home-play h2, .home-devlog h2 { font-size: clamp(1.65rem, 4vw, 2.25rem); }
+.home-play p { font-size: 1.0625rem; }
+.home-devlog { border-top: 1px solid var(--line); }
 .home-devlog > .text-link { margin-top: 16px; }
