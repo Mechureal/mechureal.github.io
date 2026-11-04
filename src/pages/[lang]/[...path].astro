@@ -1,0 +1,71 @@
+---
+import { render } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import GameHero from '../../components/GameHero.astro';
+import PostCards from '../../components/PostCards.astro';
+import { publishedPosts, languages, postUrl, formatDate, type Lang, type Post } from '../../lib/content';
+import { copy } from '../../lib/i18n';
+
+export async function getStaticPaths() {
+  const posts = await publishedPosts();
+  const routes: { params: { lang: Lang; path: string | undefined }; props: Record<string, unknown> }[] = [];
+  for (const lang of languages) {
+    for (const path of [undefined, 'games', 'games/broke-rider-simulator', 'about', 'contact']) routes.push({ params: { lang, path }, props: { view: path || 'home' } });
+    const local = posts.filter(p => p.data.lang === lang);
+    for (const tag of [undefined, ...new Set(local.flatMap(p => p.data.tags))]) {
+      const filtered = tag ? local.filter(p => p.data.tags.includes(tag)) : local;
+      const count = Math.max(1, Math.ceil(filtered.length / 6));
+      const base = tag ? `devlog/tag/${tag}` : 'devlog';
+      for (let page = 1; page <= count; page++) routes.push({ params: { lang, path: page === 1 ? base : `${base}/page/${page}` }, props: { view: 'devlog', tag, page, count, base, listing: filtered.slice((page - 1) * 6, page * 6) } });
+    }
+    for (const post of local) routes.push({ params: { lang, path: `devlog/${post.data.slug}` }, props: { view: 'article', post } });
+  }
+  return routes;
+}
+interface Props { view: string; tag?: string; page?: number; count?: number; base?: string; listing?: Post[]; post?: Post; }
+const { view, tag, page = 1, count = 1, base = 'devlog', listing = [], post } = Astro.props;
+const lang = Astro.params.lang as Lang;
+const other = lang === 'ko' ? 'en' : 'ko';
+const ko = lang === 'ko';
+const t = copy[lang];
+const posts = await publishedPosts();
+const local = posts.filter(p => p.data.lang === lang);
+const tags = [...new Set(local.flatMap(p => p.data.tags))].sort();
+const translated = post && posts.find(p => p.data.lang === other && p.data.translationKey === post.data.translationKey);
+const otherPosts = posts.filter(p => p.data.lang === other && (!tag || p.data.tags.includes(tag)));
+const listingTranslationExists = (!tag || otherPosts.length > 0) && page <= Math.max(1, Math.ceil(otherPosts.length / 6));
+const fallback = view === 'article' ? !translated : view === 'devlog' ? !listingTranslationExists : false;
+const alternate = view === 'article' ? translated ? postUrl(translated) : `/${other}/devlog/` : view === 'devlog' && fallback ? `/${other}/devlog/` : undefined;
+const titles: Record<string, string> = { home: ko ? '일상에, 플레이를 더하다' : 'Everyday life. Unexpected play.', games: ko ? '우리가 만드는 게임' : 'Games in the making', 'games/broke-rider-simulator': t.game, about: ko ? '작은 팀, 새로운 시선' : 'A small team. A fresh perspective.', contact: t.contact, devlog: tag ? `${t.logs} · #${tag}` : t.logs, article: post?.data.title || '' };
+const title = titles[view] + (page > 1 ? ` · ${page}` : '');
+const description = post?.data.description || (view.includes('games') ? t.gameIntro : view === 'contact' ? t.contactIntro : t.intro);
+const Content = post ? (await render(post)).Content : undefined;
+const position = post ? local.findIndex(p => p.id === post.id) : -1;
+const related = post ? local.filter(p => p.id !== post.id && (p.data.game === post.data.game || p.data.tags.some(tag => post.data.tags.includes(tag)))).slice(0, 3) : [];
+---
+<Layout {lang} {title} {description} {alternate} {fallback} article={!!post} date={post?.data.date} updated={post?.data.updated}>
+{view === 'home' && <>
+  <section class="studio-intro"><div><p class="eyebrow"><span class="tiny-cross">+</span> INDEPENDENT GAME STUDIO</p><h1>{t.studio}</h1></div><p>{t.intro}</p></section>
+  <GameHero {lang} />
+  <div class="project-strip"><span>01 — {ko ? '개발 중인 프로젝트' : 'PROJECT IN DEVELOPMENT'}</span><span>FIRST PERSON / SIMULATION / COMEDY</span></div>
+  <section class="section"><div class="section-head"><div><p class="eyebrow">BEHIND THE SCENES</p><h2>{t.latest}</h2></div><a class="text-link" href={`/${lang}/devlog/`}>{t.all} ↗</a></div><PostCards posts={local.slice(0, 3)} {lang} /></section>
+  <section class="studio-note"><p class="eyebrow">THIS IS MECHUREAL</p><h2>{ko ? '익숙한 세계를,\n조금 다른 방식으로.' : 'The familiar world.\nA different way to play.'}</h2><div><p>{t.intro}</p><a class="text-link" href={`/${lang}/about/`}>{t.nav[3]} ↗</a></div></section>
+</>}
+{view === 'games' && <><section class="page-heading"><p class="eyebrow">OUR GAMES / 001</p><h1>{title}</h1><p>{ko ? '우리가 탐험하고 있는 첫 번째 세계를 만나보세요.' : 'Meet the first world we are exploring.'}</p></section><GameHero {lang} /></>}
+{view === 'games/broke-rider-simulator' && <>
+  <div class="detail-top"><a class="text-link" href={`/${lang}/games/`}>← {t.nav[1]}</a><span>{ko ? '딸배 시뮬레이터' : 'BROKE RIDER SIMULATOR'}</span></div><GameHero {lang} detail />
+  <div class="game-facts"><div><span>{ko ? '장르' : 'GENRE'}</span><strong>{ko ? '배달 · 생활 · 코미디' : 'Delivery · Life · Comedy'}</strong></div><div><span>{ko ? '플레이' : 'PLAYERS'}</span><strong>{ko ? '1인칭 싱글플레이' : 'First-person single-player'}</strong></div><div><span>{ko ? '목표 플랫폼' : 'TARGET PLATFORMS'}</span><strong>Windows / macOS</strong></div><div><span>{ko ? '출시 일정' : 'RELEASE'}</span><strong>{ko ? '미정' : 'To be announced'}</strong></div></div>
+  <section class="section" id="gameplay"><div class="section-head"><div><p class="eyebrow">THE DAILY ROUTE</p><h2>{ko ? '배달 한 건에도, 이야기는 있다.' : 'Every delivery has a story.'}</h2></div></div><p class="notice">{t.planned}</p>
+  <ol class="gameplay-steps">{(ko ? [['주문을 받다', '주문을 확인하고 수락한 뒤 가게로 이동합니다. 주문번호와 음식을 대조하고 실제 물품을 픽업합니다.'], ['도시를 달리다', '자전거 등 이동수단으로 음식을 운반하고, 지도와 길찾기를 이용해 도시의 골목을 탐색합니다.'], ['한 건을 마치다', '건물 안으로 들어가 지정된 배송지와 수령인을 확인합니다. 배달을 마치고 수익을 정산합니다.']] : [['Take the order', 'Check and accept an order. Reach the store, match the order number to the food, and physically pick it up.'], ['Ride the city', 'Carry the order by bicycle and other planned vehicles. Use maps and navigation to find your way through the streets.'], ['Make the delivery', 'Enter buildings, confirm the destination and recipient, complete the delivery, and settle your earnings.']]).map(([heading, text], i) => <li><span class="step-number">0{i + 1}</span><h3>{heading}</h3><p>{text}</p></li>)}</ol></section>
+  <section class="section modes"><div><p class="eyebrow">01 / STORY MODE</p><h2>{ko ? '빚 너머의 자유를 향해.' : 'Find freedom beyond the debt.'}</h2><p>{ko ? '수원 인계동 주변을 바탕으로, OSM 데이터를 활용한 제작자 큐레이션 도시를 계획합니다. 배달과 생활, 경제·부채 관리, 캐릭터와 서사 진행이 하나의 여정으로 이어집니다.' : 'A creator-curated city based on OpenStreetMap data around Ingye-dong, Suwon. Delivery, daily life, debt management, characters, and narrative progression are planned as one connected journey.'}</p></div><div><p class="eyebrow">02 / FREE DELIVERY MODE</p><h2>{ko ? '원하는 곳에서, 배달 그 자체.' : 'Your place. Your delivery route.'}</h2><p>{ko ? '플레이어가 선택한 실제 지역을 바탕으로 OSM 지도를 생성하는 배달 중심 모드입니다. 스토리나 생활·채무 시스템에 필수로 의존하지 않는 경험을 목표로 합니다.' : 'A delivery-focused mode using OSM map generation for a real-world area selected by the player. The goal is an experience without mandatory story, life, or debt systems.'}</p></div></section>
+  <section class="development-status"><div><p class="eyebrow">WORK IN PROGRESS</p><h2>{ko ? '지금은 개발 중입니다.' : 'Currently in development.'}</h2><p>{ko ? '출시일과 플레이 가능한 빌드는 아직 안내되지 않았습니다. 확인된 소식은 개발 일지를 통해 공유합니다.' : 'A release date and playable build have not been announced. Confirmed updates will be shared in our devlog.'}</p></div><div class="steam-placeholder"><span>STEAM</span><strong>{t.pending}</strong><p>{ko ? '공식 스토어 페이지가 열리면 연결됩니다.' : 'A link will be added when the official store page is available.'}</p></div></section>
+  <section class="section"><div class="section-head"><h2>{t.logs}</h2><a class="text-link" href={`/${lang}/devlog/`}>{t.all} ↗</a></div><PostCards posts={local.filter(p => p.data.game === 'broke-rider-simulator').slice(0, 3)} {lang} /></section>
+</>}
+{view === 'about' && <><section class="page-heading"><p class="eyebrow">ABOUT MECHUREAL</p><h1>{title}</h1><p>{t.intro}</p></section><section class="about-manifesto"><span class="giant-mark" aria-hidden="true">M↗</span><div><h2>{ko ? '일상을 관찰하고,\n플레이로 옮깁니다.' : 'Observe the everyday.\nTurn it into play.'}</h2><p>{ko ? 'Mechureal은 배달 한 건, 도시의 골목, 하루를 살아가는 작은 선택에서 게임의 가능성을 찾습니다. 생활의 디테일과 유머를 담아 우리만의 시뮬레이션 경험을 만들어갑니다.' : 'Mechureal finds possibilities for games in a delivery, a city street, and the small choices of everyday life. We are building our own simulation experience through everyday detail and humor.'}</p><p>{ko ? '현재 Unity 6.3으로 딸배 시뮬레이터를 개발하고 있습니다. 개발 과정과 고민은 팀의 공식 개발 일지에 기록합니다.' : 'We are developing BROKE RIDER SIMULATOR with Unity 6.3. Our official devlog records the process and the decisions along the way.'}</p><a class="button" href={`/${lang}/games/`}>{t.nav[1]} ↗</a></div></section></>}
+{view === 'contact' && <><section class="page-heading"><p class="eyebrow">GET IN TOUCH</p><h1>{title}</h1><p>{t.contactIntro}</p></section><section class="contact-list">{[['EMAIL', ko ? '공식 문의 이메일' : 'Official contact email'], ['YOUTUBE / SOCIAL', ko ? '영상과 소셜 채널' : 'Video and social channels'], ['STEAM', ko ? '게임 스토어' : 'Game store']].map(([label, text]) => <div><span class="eyebrow">{label}</span><h2>{text}</h2><span class="muted">{t.pending}</span></div>)}<div><span class="eyebrow">GITHUB</span><h2>Mechureal</h2><a class="text-link" href="https://github.com/Mechureal">{ko ? '공식 조직' : 'Official organization'} ↗</a></div></section></>}
+{view === 'devlog' && <><section class="page-heading"><p class="eyebrow">FIELD NOTES / DEVLOG</p><h1>{ko ? '만드는 과정도, 이야기니까.' : 'The making is part of the story.'}</h1><p>{ko ? '아이디어부터 작은 결정까지. Mechureal의 개발 기록입니다.' : 'From first ideas to small decisions. Development notes from Mechureal.'}</p></section><nav class="tag-filter" aria-label={ko ? '태그 필터' : 'Filter by tag'}><a aria-current={!tag ? 'page' : undefined} href={`/${lang}/devlog/`}>{ko ? '전체' : 'All'}</a>{tags.map(item => <a aria-current={item === tag ? 'page' : undefined} href={`/${lang}/devlog/tag/${item}/`}>#{item}</a>)}</nav><PostCards posts={listing} {lang} /><nav class="pagination" aria-label={ko ? '페이지 탐색' : 'Pagination'}>{Array.from({ length: count }, (_, i) => i + 1).map(n => <a href={`/${lang}/${base}/${n === 1 ? '' : `page/${n}/`}`} aria-current={n === page ? 'page' : undefined}>{n}</a>)}</nav></>}
+{view === 'article' && post && Content && <>
+  <article class="article"><header class="article-header"><a class="text-link" href={`/${lang}/devlog/`}>← {t.back}</a><div class="post-meta"><time datetime={post.data.date.toISOString()}>{formatDate(post.data.date, lang)}</time><span>Mechureal</span></div><h1>{post.data.title}</h1><p class="article-lede">{post.data.description}</p><div class="article-tags">{post.data.tags.map(tag => <a href={`/${lang}/devlog/tag/${tag}/`}>#{tag}</a>)}</div>{fallback && <p class="notice">{t.switchFallback}</p>}{post.data.updated && <p class="muted">{ko ? '업데이트' : 'Updated'}: {formatDate(post.data.updated, lang)}</p>}</header><figure><img src={post.data.cover} alt={t.concept} width="1200" height="800" /><figcaption>{t.concept}</figcaption></figure><div class="prose"><Content /></div><nav class="article-navigation" aria-label={ko ? '게시글 탐색' : 'Article navigation'}><div>{local[position + 1] && <a href={postUrl(local[position + 1])}>{t.previous} ←<strong>{local[position + 1].data.title}</strong></a>}</div><div>{local[position - 1] && <a href={postUrl(local[position - 1])}>{t.next} →<strong>{local[position - 1].data.title}</strong></a>}</div></nav></article>
+  <section class="section"><div class="section-head"><h2>{t.related}</h2></div><PostCards posts={related} {lang} /></section>
+</>}
+</Layout>
