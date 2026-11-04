@@ -7,10 +7,10 @@ const t = copy[lang];
 ---
 <section class:list={['game-hero', { 'game-detail-hero': detail }]}>
   <img class="hero-art" src="/images/city-grid.svg" width="1200" height="800" alt={lang === 'ko' ? '도시의 거리와 배달 경로를 추상적으로 표현한 콘셉트 그래픽' : 'Concept illustration of city streets and a delivery route'} fetchpriority="high" />
-  <div class="hero-shade"></div><div class="hero-content"><span class="status"><i></i>{t.status}</span><p class="eyebrow">MECHUREAL / PROJECT 001</p>
-  {detail ? <h1>BROKE RIDER<br /><span>SIMULATOR</span></h1> : <h2>BROKE RIDER<br /><span>SIMULATOR</span></h2>}
-  <p class="hero-tagline">{t.pitch}</p><p class="hero-description">{t.gameIntro}</p>
+  <div class="hero-content"><span class="status"><i></i>{t.status}</span>
+  {detail ? <h1>{t.game}</h1> : <h2>{t.game}</h2>}
+  <p class="hero-description">{t.gameIntro}</p>
   <a class="button" href={detail ? '#gameplay' : `/${lang}/games/broke-rider-simulator/`}>{detail ? (lang === 'ko' ? '게임플레이 살펴보기' : 'Discover the gameplay') : t.explore}<span aria-hidden="true">↗</span></a>
   <div class="platforms">Windows / macOS <span>·</span> Unity 6.3</div></div>
-  <span class="art-label">{t.concept}</span><span class="hero-index" aria-hidden="true">01 / IN THE MAKING</span>
+  <span class="art-label">{t.concept}</span>
 </section>

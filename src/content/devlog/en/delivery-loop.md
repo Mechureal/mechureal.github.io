@@ -1,6 +1,6 @@
 ---
-title: "The small actions behind a delivery"
-description: "A look at the planned delivery loop, from checking an order to confirming its recipient."
+title: "What goes into one delivery?"
+description: "From checking an order number at the shop to finding the recipient."
 date: 2026-11-04
 author: Mechureal
 game: broke-rider-simulator
@@ -11,21 +11,6 @@ translationKey: delivery-loop
 slug: delivery-loop
 ---
 
-## A delivery starts before the ride
+Here is the order we have on paper: take a job, go to the shop, and check the order number. Carry the food to the address, go inside, and find the recipient. Then settle up.
 
-In the design for BROKE RIDER SIMULATOR, a delivery is more than reaching a destination. It includes checking and accepting an order, visiting the store, and matching an order number to the food. Physically picking up and carrying the items is also a core goal.
-
-## On the street and inside the building
-
-The planned loop uses bicycles and other vehicles, maps and navigation, building entry, and confirmation of the delivery location and recipient before completion and payment.
-
-1. Check and accept an order.
-2. Reach the store and match the order number to the food.
-3. Pick up and carry the items.
-4. Travel using maps and navigation.
-5. Enter the building and confirm the address and recipient.
-6. Complete the delivery and settle earnings.
-
-## A record of goals
-
-This is the delivery loop described in GDD v1.2, not a list of completed features. Actual controls and the implementation status of each step will be shared after verification.
+The part we are still thinking through is how much of that you should do yourself. Arriving at a pin on a map feels different from finding the right person inside a building. For now, this is a note on how one delivery could work.
