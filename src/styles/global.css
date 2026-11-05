@@ -72,3 +72,6 @@ main{flex:1 0 auto;margin-block:0}
   letter-spacing: -0.055em;
   line-height: 1.2;
 }
+
+/* Reserve the scrollbar space so the shared header and footer do not shift. */
+html { overflow-y: scroll; }

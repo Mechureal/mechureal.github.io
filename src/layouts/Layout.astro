@@ -40,7 +40,7 @@ const sections = ['', 'about/', 'games/', 'announcements/', 'devlog/', 'contact/
     <a class="skip" href="#main">{t.skip}</a>
     <header class="site-header"><div class="nav-wrap">
       <a class="brand" href={`/${lang}/`} aria-label="Mechureal"><img class="brand-egg" src="/images/mechureal-egg.png" width="42" height="42" alt="" />TEAM MECHUREAL</a>
-      <nav class="desktop-nav" aria-label={lang === 'ko' ? '주 메뉴' : 'Main navigation'}>{sections.map((section, i) => <a aria-current={activeSection ? activeSection === section : path === `/${lang}/${section}` || (section && path.startsWith(`/${lang}/${section}`)) ? 'page' : undefined} href={`/${lang}/${section}`}>{t.nav[i]}</a>)}</nav>
+      <nav class="desktop-nav" aria-label={lang === 'ko' ? '주 메뉴' : 'Main navigation'}>{sections.map((section, i) => <a aria-current={(activeSection ? activeSection === section : path === `/${lang}/${section}` || (section && path.startsWith(`/${lang}/${section}`))) ? 'page' : undefined} href={`/${lang}/${section}`}>{t.nav[i]}</a>)}</nav>
       <a class="language" href={alternatePath} lang={other} title={fallback ? t.switchFallback : undefined}>{lang === 'ko' ? 'EN' : '한국어'} </a>
       <details class="mobile-menu"><summary aria-label={lang === 'ko' ? '메뉴' : 'Menu'}>☰</summary><nav aria-label={lang === 'ko' ? '모바일 메뉴' : 'Mobile navigation'}>{sections.map((section, i) => <a href={`/${lang}/${section}`}>{t.nav[i]}</a>)}</nav></details>
     </div></header>
