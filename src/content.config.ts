@@ -9,7 +9,7 @@ const devlog = defineCollection({
     author: z.literal('Mechureal').default('Mechureal'),
     game: z.literal('broke-rider-simulator').optional(),
     tags: z.array(z.string().regex(/^[a-z0-9-]+$/)).default([]),
-    cover: z.string().default('/images/city-grid.svg'),
+    cover: z.string().optional(),
     draft: z.boolean().default(true), lang: z.enum(['ko', 'en']),
     translationKey: z.string(), slug: z.string().regex(/^[a-z0-9-]+$/),
   }),

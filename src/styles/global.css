@@ -52,4 +52,14 @@ main{flex:1 0 auto;margin-block:0}
 
 
 .article figcaption{max-width:none;text-align:center}.prose{max-width:none;margin:0}
+.article .prose figure img{max-height:none;object-fit:contain}
+.article .prose figcaption{font-family:'Gowun Dodum','Malgun Gothic',sans-serif;font-style:normal;text-align:center;line-height:1.6}
+.prose code,.prose pre{font-family:Consolas,'Courier New',monospace}
 
+
+.article-related{max-width:800px;margin-inline:auto;padding-top:48px}
+.article-related .section-head h2{font-size:1.5rem}
+.article-navigation a{text-decoration:none;display:inline-block}
+.article-navigation a:hover strong{text-decoration:underline;text-underline-offset:.2em}
+.article-navigation a:focus-visible{outline-offset:5px}
+@media(max-width:480px){.article-related{padding-top:36px}.article-navigation{gap:18px}.article-navigation strong{overflow-wrap:anywhere}}

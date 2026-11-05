@@ -3,3 +3,7 @@ dist/
 .astro/
 .qa/
 *.log
+
+# Local editorial instructions and image preparation notes
+/docs/internal/
+/docs/devlog/*-images.md

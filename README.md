@@ -40,7 +40,6 @@ updated: 2026-11-04
 author: Mechureal
 game: broke-rider-simulator
 tags: [game-design, planning]
-cover: /images/city-grid.svg
 draft: true
 lang: ko
 translationKey: unique-topic
