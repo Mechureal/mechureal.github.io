@@ -5,6 +5,9 @@ import type { Lang } from '../lib/content';
 interface Props { activeSection?: string; lang: Lang; title: string; description: string; alternate?: string; fallback?: boolean; article?: boolean; date?: Date; updated?: Date; image?: string; noindex?: boolean; }
 const { activeSection, lang, title, description, alternate, fallback, article, date, updated, image = '/images/social.png', noindex } = Astro.props;
 const t = copy[lang];
+const pageTitle = article
+  ? `${activeSection === 'announcements/' ? t.nav[3] : t.nav[4]} | ${title}`
+  : `${title} | Team Mechureal`;
 const other = lang === 'ko' ? 'en' : 'ko';
 const path = Astro.url.pathname;
 const canonical = new URL(path, Astro.site);
@@ -17,7 +20,7 @@ const sections = ['', 'about/', 'games/', 'announcements/', 'devlog/', 'contact/
     <meta charset="utf-8" /><meta name="viewport" content="width=device-width" />
     <link rel="preload" href="/fonts/GowunDodum-Regular.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/Gaegu-Bold.woff2" as="font" type="font/woff2" crossorigin />
-    <title>{title} | Team Mechureal</title><meta name="description" content={description} />
+    <title>{pageTitle}</title><meta name="description" content={description} />
     <meta name="author" content="Mechureal" /><meta name="theme-color" content="#fff9ee" />
     <link rel="icon" type="image/png" href="/images/mechureal-egg.png" />
     <link rel="canonical" href={canonical} />
