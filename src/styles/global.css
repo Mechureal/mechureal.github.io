@@ -63,3 +63,12 @@ main{flex:1 0 auto;margin-block:0}
 .article-navigation a:hover strong{text-decoration:underline;text-underline-offset:.2em}
 .article-navigation a:focus-visible{outline-offset:5px}
 @media(max-width:480px){.article-related{padding-top:36px}.article-navigation{gap:18px}.article-navigation strong{overflow-wrap:anywhere}}
+
+/* A compact, signboard-like treatment for the home page game title. */
+.home-opening h1 {
+  font-family: Impact, 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
+  font-weight: 800;
+  font-size: clamp(2.4rem, 6vw, 4.4rem);
+  letter-spacing: -0.055em;
+  line-height: 1.2;
+}
