@@ -26,23 +26,32 @@ import { cityMotion } from '../lib/scroll-motion';
 const scene = document.querySelector<HTMLElement>('.city-prologue');
 if (scene) {
  const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+ const sky = scene.querySelector<HTMLElement>('.scene-sky');
+ const middle = scene.querySelector<HTMLElement>('.scene-mid');
+ const street = scene.querySelector<HTMLElement>('.scene-street');
+ const rider = scene.querySelector<HTMLElement>('.scene-courier');
+ const ground = scene.querySelector<HTMLElement>('.scene-ground');
+ const title = scene.querySelector<HTMLElement>('.city-title');
+ const header = document.querySelector<HTMLElement>('.site-header');
  let raf = 0;
  const paint = () => {
   raf = 0;
-  const header = document.querySelector<HTMLElement>('.site-header')?.offsetHeight ?? 64;
-  const frame = cityMotion(scene.getBoundingClientRect().top, scene.offsetHeight, header);
-  scene.style.setProperty('--far-y', `${frame.far}px`);
-  scene.style.setProperty('--mid-y', `${frame.middle}px`);
-  scene.style.setProperty('--near-y', `${frame.near}px`);
-  scene.style.setProperty('--ground-depth', `${Math.max(0, -frame.near)}px`);
-  scene.style.setProperty('--rider-y', `${frame.rider}px`);
-  scene.style.setProperty('--title-opacity', String(frame.title));
+  const frame = cityMotion(scene.getBoundingClientRect().top, scene.offsetHeight, header?.offsetHeight ?? 64);
+  if (sky) sky.style.transform = `translate3d(0, ${frame.far}px, 0)`;
+  if (middle) middle.style.transform = `translate3d(0, ${frame.middle}px, 0)`;
+  if (street) street.style.transform = `translate3d(-50%, ${frame.near}px, 0)`;
+  if (rider) rider.style.transform = `translate3d(-50%, ${frame.rider}px, 0)`;
+  if (ground) ground.style.transform = `translate3d(0, ${frame.ground}px, 0)`;
+  if (title) title.style.opacity = String(frame.title);
  };
  const schedule = () => { if (!raf && !reduced.matches) raf = requestAnimationFrame(paint); };
  const configure = () => {
-  scene.classList.toggle('parallax-ready', !reduced.matches);
-  if (reduced.matches && raf) { cancelAnimationFrame(raf); raf = 0; }
-  schedule();
+  if (reduced.matches) {
+   if (raf) cancelAnimationFrame(raf);
+   raf = 0;
+   for (const layer of [sky, middle, street, rider, ground]) layer?.style.removeProperty('transform');
+   title?.style.removeProperty('opacity');
+  } else schedule();
  };
  addEventListener('scroll', schedule, { passive:true });
  addEventListener('resize', schedule, { passive:true });
