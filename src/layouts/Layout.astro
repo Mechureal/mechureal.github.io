@@ -1,6 +1,6 @@
 ---
 
-import '../styles/art-direction.css';
+import '../styles/urban.css';
 import { copy } from '../lib/i18n';
 import type { Lang } from '../lib/content';
 interface Props { pageClass?: string; activeSection?: string; lang: Lang; title: string; description: string; alternate?: string; fallback?: boolean; article?: boolean; date?: Date; updated?: Date; image?: string; noindex?: boolean; }
@@ -21,8 +21,8 @@ const sections = ['', 'about/', 'games/', 'announcements/', 'devlog/', 'contact/
     <meta charset="utf-8" /><meta name="viewport" content="width=device-width" />
     <link rel="preload" href="/fonts/PretendardVariable.woff2" as="font" type="font/woff2" crossorigin />
     <title>{pageTitle}</title><meta name="description" content={description} />
-    <meta name="author" content="Mechureal" /><meta name="theme-color" content="#f3dbe5" />
-    <link rel="icon" type="image/webp" href="/images/pink-studio/oval-quail-egg.webp" />
+    <meta name="author" content="Mechureal" /><meta name="theme-color" content="#171c2c" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="canonical" href={canonical} />
     {!noindex && <link rel="alternate" hreflang={lang} href={canonical} />}
     {!noindex && !fallback && <link rel="alternate" hreflang={other} href={new URL(alternatePath, Astro.site)} />}

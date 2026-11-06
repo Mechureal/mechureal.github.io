@@ -1,0 +1,10 @@
+---
+interface Props { priority?: boolean; }
+const { priority = false } = Astro.props;
+---
+<div class="urban-scene" aria-hidden="true">
+  <img class="scene-sky" src="/images/urban-dusk/skyline.webp" width="1536" height="1024" alt="" loading={priority ? 'eager' : 'lazy'} fetchpriority={priority ? 'high' : 'auto'} />
+  <img class="scene-street" src="/images/urban-dusk/street.webp" width="1536" height="1024" alt="" loading={priority ? 'eager' : 'lazy'} />
+  <img class="scene-courier" src="/images/urban-dusk/courier.webp" width="700" height="1050" alt="" loading={priority ? 'eager' : 'lazy'} />
+  <div class="scene-shade"></div>
+</div>
