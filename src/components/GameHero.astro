@@ -6,7 +6,7 @@ const { lang, detail = false } = Astro.props;
 const t = copy[lang];
 ---
 <section class:list={['game-hero', { 'game-detail-hero': detail }]}>
-  <img class="hero-art" src="/images/rebrand/delivery-world.webp" width="1536" height="1024" alt={lang === 'ko' ? '미니어처 도시에서 자전거를 타는 배달 기사의 콘셉트 아트' : 'Concept art of a bicycle courier in a miniature city'} fetchpriority="high" />
+  <img class="hero-art" src="/images/pink-studio/delivery-city.webp" width="1536" height="1024" alt={lang === 'ko' ? '분홍빛 저녁 도시와 배달 스쿠터의 콘셉트 아트' : 'Concept art of a delivery scooter and city at dusk'} fetchpriority="high" />
   <div class="hero-content"><span class="status">{t.status}</span>
   {detail ? <h1>{t.game}</h1> : <h2>{t.game}</h2>}
   <p class="hero-description">{t.gameIntro}</p>
