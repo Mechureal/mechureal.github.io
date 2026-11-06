@@ -34,6 +34,7 @@ if (scene) {
   scene.style.setProperty('--far-y', `${frame.far}px`);
   scene.style.setProperty('--mid-y', `${frame.middle}px`);
   scene.style.setProperty('--near-y', `${frame.near}px`);
+  scene.style.setProperty('--ground-depth', `${Math.max(0, -frame.near)}px`);
   scene.style.setProperty('--rider-y', `${frame.rider}px`);
   scene.style.setProperty('--title-opacity', String(frame.title));
  };
