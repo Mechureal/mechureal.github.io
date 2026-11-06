@@ -6,11 +6,10 @@ interface Props { lang: Lang; detail?: boolean; }
 const { lang, detail = false } = Astro.props;
 const t = copy[lang];
 ---
-<section class:list={['game-hero', { 'game-detail-hero': detail }]}>
-  <div class="hero-art"><UrbanScene /></div>
-  <div class="hero-content"><span class="status">{t.status}</span>
-  {detail ? <h1>{t.game}</h1> : <h2>{t.game}</h2>}
-  <p class="hero-description">{t.gameIntro}</p>
-  <a class="button" href={detail ? '#gameplay' : `/${lang}/games/broke-rider-simulator/`}>{detail ? (lang === 'ko' ? '게임플레이 살펴보기' : 'Discover the gameplay') : t.explore}</a>
-  <div class="platforms">Windows / macOS <span>·</span> Unity</div></div>
-</section>
+{detail ? <section class="game-detail-banner">
+ <div class="detail-scene"><UrbanScene priority /></div>
+ <div class="detail-heading"><div><p class="status">{t.status}</p><h1>{t.game}</h1></div><div class="detail-summary"><p>{t.gameIntro}</p><p class="platforms">Windows / macOS <span>·</span> Unity</p><a class="text-link" href="#gameplay">{lang === 'ko' ? '게임플레이 살펴보기' : 'Discover the gameplay'} <span aria-hidden="true">↓</span></a></div></div>
+</section> : <section class="game-hero">
+ <div class="hero-art"><UrbanScene /></div>
+ <div class="hero-content"><span class="status">{t.status}</span><h2>{t.game}</h2><p class="hero-description">{t.gameIntro}</p><a class="button" href={`/${lang}/games/broke-rider-simulator/`}>{t.explore}</a><div class="platforms">Windows / macOS <span>·</span> Unity</div></div>
+</section>}

@@ -21,3 +21,12 @@ main{width:min(1320px,100%);padding:0 6vw;margin:auto;flex:1}.page-heading{paddi
 .scene-mid{position:absolute;width:80%;height:80%;left:10%;bottom:10%;object-fit:contain;object-position:center bottom;transform:translateY(var(--mid-y,0px));z-index:1;will-change:transform}
 @media(max-width:800px){.scene-mid{width:150%;left:-25%;height:80%;bottom:14%}}
 @media(prefers-reduced-motion:reduce){.scene-mid{transform:none}}
+
+/* Center the home action across both paragraphs. */
+.intro-actions{display:flex;justify-content:center;margin-top:35px}.intro-actions .button{margin-top:0}
+.about-logo{display:flex;align-items:center;justify-content:center}.about-logo img{width:min(100%,430px);height:auto;mix-blend-mode:lighten}
+/* The detail page opens with a wide scene and a separate editorial heading. */
+.detail-scene{height:clamp(300px,38vw,510px);position:relative;overflow:hidden}.detail-scene .scene-courier{height:51%;bottom:0}.detail-scene .scene-mid{height:90%;bottom:5%}
+.detail-heading{display:grid;grid-template-columns:1.25fr 1fr;gap:6vw;padding:40px 0 45px}.detail-heading h1{font-size:clamp(40px,5.5vw,76px);font-weight:850;line-height:1.1;margin-top:15px}.detail-heading .status{color:var(--blue)}.detail-summary>p:first-child{font-size:16px;line-height:1.9}.detail-summary .platforms{color:var(--muted);margin:18px 0 22px}.detail-summary .text-link{color:var(--blue)}
+@media(max-width:800px){.about-logo img{width:min(100%,340px)}.detail-heading{grid-template-columns:1fr;gap:25px;padding:30px 0}.detail-heading h1{font-size:clamp(36px,7vw,55px)}.detail-scene{height:350px}.detail-summary>p:first-child{font-size:15px}.intro-actions{margin-top:28px}}
+@media(max-width:480px){.detail-scene{height:300px}.about-logo img{width:min(100%,300px)}}
