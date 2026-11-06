@@ -1,17 +1,29 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { cityMotion } from '../src/lib/scroll-motion.ts';
-test('city scene starts aligned, moves at distinct depths, and clamps at its limits', () => {
- for (const viewport of [667, 900]) {
-  const header=64, height=viewport*1.55, distance=height-viewport+header;
-  const start=cityMotion(header,height,viewport,header);
+
+test('city layers move continuously while the hero scrolls out of view', () => {
+ for (const height of [320, 603, 836]) {
+  const header=64;
+  const start=cityMotion(header,height,header);
   assert.deepEqual(start,{far:0,near:0,rider:-0,title:1});
-  const end=cityMotion(header-distance,height,viewport,header);
+  let last={far:0,near:0,rider:0};
+  for (let scroll=1;scroll<=height;scroll++) {
+   const frame=cityMotion(header-scroll,height,header);
+   // Every visible layer keeps moving upward with the document; none pins the scene.
+   for (const layer of ['far','near','rider']) {
+    const screenY=-scroll+frame[layer];
+    assert.ok(screenY<last[layer]);
+    assert.ok(last[layer]-screenY<1.1);
+    last[layer]=screenY;
+   }
+  }
+  const end=cityMotion(header-height,height,header);
   assert.ok(end.far>end.near && end.near>0 && end.rider<0);
-  assert.ok(Math.abs(end.title-.1)<1e-10);
-  assert.deepEqual(cityMotion(header-distance-500,height,viewport,header),end);
-  assert.deepEqual(cityMotion(header+500,height,viewport,header),start);
-  const middle=cityMotion(header-distance/2,height,viewport,header);
+  assert.ok(Math.abs(end.title-.2)<1e-10);
+  assert.deepEqual(cityMotion(header-height-500,height,header),end);
+  assert.deepEqual(cityMotion(header+500,height,header),start);
+  const middle=cityMotion(header-height/2,height,header);
   assert.ok(Math.abs(middle.far-end.far/2)<1e-10);
  }
 });

@@ -30,7 +30,7 @@ if (scene) {
  const paint = () => {
   raf = 0;
   const header = document.querySelector<HTMLElement>('.site-header')?.offsetHeight ?? 64;
-  const frame = cityMotion(scene.getBoundingClientRect().top, scene.offsetHeight, innerHeight, header);
+  const frame = cityMotion(scene.getBoundingClientRect().top, scene.offsetHeight, header);
   scene.style.setProperty('--far-y', `${frame.far}px`);
   scene.style.setProperty('--near-y', `${frame.near}px`);
   scene.style.setProperty('--rider-y', `${frame.rider}px`);
