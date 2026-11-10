@@ -55,6 +55,14 @@ main{flex:1 0 auto;margin-block:0}
 .article .prose figure img{max-height:none;object-fit:contain}
 .article .prose figcaption{font-family:'Gowun Dodum','Malgun Gothic',sans-serif;font-style:normal;text-align:center;line-height:1.6}
 .prose code,.prose pre{font-family:Consolas,'Courier New',monospace}
+.prose #building-taxonomy { scroll-margin-top: 5rem; }
+.prose .taxonomy-details { margin-block: 1rem; border-bottom: 1px solid var(--line); }
+.prose .taxonomy-details summary { padding-block: .55rem; }
+.prose .taxonomy-table { max-width: 100%; overflow-x: auto; margin-bottom: 1rem; }
+.prose .taxonomy-table table { width: 100%; min-width: 42rem; border-collapse: collapse; font-size: .93rem; line-height: 1.55; }
+.prose .taxonomy-table th, .prose .taxonomy-table td { padding: .6rem; border-bottom: 1px solid var(--line); text-align: start; vertical-align: top; }
+.prose .taxonomy-table th { background: var(--surface); }
+.prose .taxonomy-table code { overflow-wrap: anywhere; }
 
 
 .article-related{max-width:800px;margin-inline:auto;padding-top:48px}
