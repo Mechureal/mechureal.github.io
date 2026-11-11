@@ -8,6 +8,40 @@ function files(dir) { return readdirSync(dir, { withFileTypes: true }).flatMap(e
 const output = files(root);
 const html = output.filter(p => p.endsWith('.html'));
 const read = path => readFileSync(path, 'utf8');
+test('the root redirects to the Korean homepage without rendering an intermediate message', () => {
+  const $ = load(read(join(root, 'index.html')));
+  assert.equal($('meta[http-equiv="refresh"]').attr('content'), '0;url=/ko/');
+  assert.match($('html').attr('style'), /background:\s*#171c2c/);
+  assert.equal($('body').html().trim(), '');
+});
+test('the built site exposes the Team Mechureal web app and its install icons', () => {
+  const manifestPath = '/site.webmanifest';
+  const appName = 'Team Mechureal';
+  const appleIcon = '/images/app-icons/icon-180.png';
+  for (const route of ['', 'ko', 'en']) {
+    const $ = load(read(join(root, route, 'index.html')));
+    assert.equal($('link[rel="manifest"]').attr('href'), manifestPath);
+    assert.equal($('meta[name="apple-mobile-web-app-title"]').attr('content'), appName);
+    assert.equal($('link[rel="apple-touch-icon"]').attr('href'), appleIcon);
+  }
+
+  const manifest = JSON.parse(read(join(root, manifestPath)));
+  assert.equal(manifest.name, appName);
+  assert.equal(manifest.short_name, appName);
+  assert.equal(manifest.display, 'standalone');
+  assert.equal(manifest.scope, '/');
+  assert.equal(manifest.start_url, '/ko/');
+
+  const icons = [...manifest.icons, { src: appleIcon, sizes: '180x180' }];
+  for (const size of ['192x192', '512x512']) {
+    assert.ok(icons.some(icon => icon.sizes === size && (!icon.purpose || icon.purpose === 'any')));
+  }
+  for (const { src, sizes } of icons) {
+    const png = readFileSync(join(root, src));
+    assert.equal(png.subarray(12, 16).toString('ascii'), 'IHDR', src);
+    assert.equal(`${png.readUInt32BE(16)}x${png.readUInt32BE(20)}`, sizes, src);
+  }
+});
 test('both languages have all required pages and three home articles', () => {
   for (const lang of ['ko', 'en']) {
     for (const route of ['', 'games/', 'games/broke-rider-simulator/', 'about/', 'contact/', 'devlog/', 'announcements/']) {
