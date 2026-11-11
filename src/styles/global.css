@@ -55,14 +55,47 @@ main{flex:1 0 auto;margin-block:0}
 .article .prose figure img{max-height:none;object-fit:contain}
 .article .prose figcaption{font-family:'Gowun Dodum','Malgun Gothic',sans-serif;font-style:normal;text-align:center;line-height:1.6}
 .prose code,.prose pre{font-family:Consolas,'Courier New',monospace}
-.prose #building-taxonomy { scroll-margin-top: 5rem; }
-.prose .taxonomy-details { margin-block: 1rem; border-bottom: 1px solid var(--line); }
-.prose .taxonomy-details summary { padding-block: .55rem; }
-.prose .taxonomy-table { max-width: 100%; overflow-x: auto; margin-bottom: 1rem; }
-.prose .taxonomy-table table { width: 100%; min-width: 42rem; border-collapse: collapse; font-size: .93rem; line-height: 1.55; }
-.prose .taxonomy-table th, .prose .taxonomy-table td { padding: .6rem; border-bottom: 1px solid var(--line); text-align: start; vertical-align: top; }
-.prose .taxonomy-table th { background: var(--surface); }
-.prose .taxonomy-table code { overflow-wrap: anywhere; }
+.prose :is(#building-taxonomy, #osm-evidence, .taxonomy-section h3) { scroll-margin-top: 5rem; }
+.prose .taxonomy-jump {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem 1.25rem;
+  padding-block: .75rem;
+  border-block: 1px solid var(--line);
+}
+.prose .taxonomy-section {
+  margin-block: 2.75rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--line);
+}
+.prose .taxonomy-section h3 { margin: 0 0 .65rem; font-size: 1.35rem; }
+.article .prose .taxonomy-section figure img {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  max-height: 33rem;
+  height: auto;
+  margin-inline: auto;
+}
+.prose .taxonomy-details { margin-block: 1.25rem; border-block: 1px solid var(--line); }
+.prose .taxonomy-details summary { padding-block: .75rem; cursor: pointer; font-weight: 600; }
+.prose .taxonomy-entries { margin: 0; }
+.prose .taxonomy-entry { padding-block: 1.15rem; border-top: 1px solid var(--line); }
+.prose .taxonomy-entry > dt { font-weight: 700; }
+.prose .taxonomy-entry > dd { margin: .65rem 0 0; }
+.prose .taxonomy-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: .8rem 1.75rem;
+  margin: 0;
+  line-height: 1.6;
+}
+.prose .taxonomy-fields > div:first-child:nth-last-child(3) { grid-column: 1 / -1; }
+.prose .taxonomy-fields dt { color: var(--muted); font-size: .85rem; }
+.prose .taxonomy-fields dd { margin: .15rem 0 0; overflow-wrap: anywhere; }
+@media (max-width: 640px) {
+  .prose .taxonomy-fields { grid-template-columns: minmax(0, 1fr); }
+}
 
 
 .article-related{max-width:800px;margin-inline:auto;padding-top:48px}
